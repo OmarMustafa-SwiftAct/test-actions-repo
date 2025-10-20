@@ -46,6 +46,7 @@ jobs:
         shell: cmd
         run: |
           @echo off
+          setlocal EnableDelayedExpansion
           cd /d "%ASI_APP_PATH%"
           call "%ACTIONS_PATH%\git_update.bat" master master %GITHUB_TOKEN%
 
@@ -57,6 +58,7 @@ jobs:
         shell: cmd
         run: |
           @echo off
+          setlocal EnableDelayedExpansion
           set PIPELINE_STAGE=setup
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
