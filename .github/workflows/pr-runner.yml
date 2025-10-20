@@ -27,6 +27,7 @@ jobs:
           for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" GITHUB_ACTIONS_SCRIPTS_PATH') do set "ACTIONS_PATH=%%i"
           >> %GITHUB_ENV% echo ASI_APP_PATH=%ASI_APP_PATH%
           >> %GITHUB_ENV% echo ACTIONS_PATH=%ACTIONS_PATH%
+          echo GITHUB_TOKEN=${{ secrets.WORKSTATION_KEY3 }} >> %GITHUB_ENV%
 
       - name: Check requirements
         id: check-reqs
@@ -44,7 +45,7 @@ jobs:
         run: |
           @echo off
           cd /d "%ASI_APP_PATH%"
-          call "%ACTIONS_PATH%\git_update.bat" master master dummy_token
+          call "%ACTIONS_PATH%\git_update.bat" master master %GITHUB_TOKEN%
 
       # =================================================================
       # 2. PIPELINE STAGES (ALL)
