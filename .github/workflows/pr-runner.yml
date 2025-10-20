@@ -19,7 +19,7 @@ jobs:
       - name: Setup environment
         id: set-env
         shell: cmd
-        run: |
+        run: | 
           @echo off
           echo --- Setting up shared environment variables ---
           for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" ASI_APP_REPO_PATH') do (
