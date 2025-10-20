@@ -49,7 +49,7 @@ jobs:
           setlocal EnableDelayedExpansion
           set PIPELINE_STAGE=setup
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
-
+ 
       - name: Pipeline - Prebuild (Handle PFCs)
         if: steps.set-env.conclusion == 'success'
         shell: cmd
