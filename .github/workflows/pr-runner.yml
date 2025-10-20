@@ -53,7 +53,7 @@ jobs:
       - name: Pipeline - Prebuild (Handle PFCs)
         if: steps.set-env.conclusion == 'success'
         shell: cmd
-        run: |
+        run: | 
           @echo off
           set PIPELINE_STAGE=prebuild-handle_pfcs
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
