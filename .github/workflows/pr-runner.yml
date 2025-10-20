@@ -59,7 +59,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (Static Analysis GL)
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -67,7 +67,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (File Management)
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -75,7 +75,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (PFC Ordering)
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -83,7 +83,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (CPP Check)
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -91,7 +91,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (Target Auto Add)
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -99,7 +99,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Compiler License Check
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -107,7 +107,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Build
-        if: steps.set-env.conclusion == 'success'
+        if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
