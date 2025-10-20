@@ -44,7 +44,6 @@ jobs:
         shell: cmd
         run: |
           @echo off
-          setlocal EnableDelayedExpansion
           cd /d "%ASI_APP_PATH%"
           call "%ACTIONS_PATH%\git_update.bat" master master %GITHUB_TOKEN%
 
