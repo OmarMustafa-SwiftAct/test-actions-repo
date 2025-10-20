@@ -1,0 +1,147 @@
+name: Run on Self-Hosted Runner (Push to Master)
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: test-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run-on-self-hosted:
+    runs-on: [self-hosted, Windows, X64]
+
+    steps:
+      # =================================================================
+      # 1. SETUP ENVIRONMENT
+      # =================================================================
+      - name: Setup environment
+        id: set-env
+        shell: cmd
+        run: |
+          @echo off
+          echo --- Setting up shared environment variables ---
+          for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" ASI_APP_REPO_PATH') do set "ASI_APP_PATH=%%i"
+          for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" GITHUB_ACTIONS_SCRIPTS_PATH') do set "ACTIONS_PATH=%%i"
+          >> %GITHUB_ENV% echo ASI_APP_PATH=%ASI_APP_PATH%
+          >> %GITHUB_ENV% echo ACTIONS_PATH=%ACTIONS_PATH%
+
+      - name: Check requirements
+        id: check-reqs
+        if: steps.set-env.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          cd /d "%ASI_APP_PATH%"
+          call "%ACTIONS_PATH%\Check_requirements.bat"
+
+      - name: Git Update
+        id: update-repos
+        if: steps.check-reqs.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          cd /d "%ASI_APP_PATH%"
+          call "%ACTIONS_PATH%\git_update.bat" master master dummy_token
+
+      # =================================================================
+      # 2. PIPELINE STAGES (ALL)
+      # =================================================================
+      - name: Pipeline - Prebuild (Setup)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=setup
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Prebuild (Handle PFCs)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-handle_pfcs
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Prebuild (Static Analysis GL)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-static_analysis_gl
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Prebuild (File Management)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-file_management
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Prebuild (PFC Ordering)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-pfc_ordering
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Prebuild (CPP Check)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-cpp_check
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Prebuild (Target Auto Add)
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-target_auto_add
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Compiler License Check
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=compiler-licence-check
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Build
+        if: steps.update-repos.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=build
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      - name: Pipeline - Post Build & Final Report
+        if: always()
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=post-build
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
+
+      # =================================================================
+      # 3. FINAL LOG COPY
+      # =================================================================
+      - name: Copy Build Result to Actions Script Folder
+        if: always()
+        shell: cmd
+        run: |
+          @echo off
+          set "SOURCE_FILE=%ASI_APP_PATH%\project\Build_Final_result.txt"
+          set "DEST_FILE=%ACTIONS_PATH%\Build_Final_result.txt"
+          if exist "%SOURCE_FILE%" (
+            echo Found result file. Copying...
+            copy /Y "%SOURCE_FILE%" "%DEST_FILE%"
+          ) else (
+            echo Build result file not found.
+          )
