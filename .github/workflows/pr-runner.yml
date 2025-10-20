@@ -23,12 +23,13 @@ jobs:
         run: |
           @echo off
           echo --- Setting up shared environment variables ---
-          for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" ASI_APP_REPO_PATH') do set "ASI_APP_PATH=%%i"
-          for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" GITHUB_ACTIONS_SCRIPTS_PATH') do set "ACTIONS_PATH=%%i"
-          set GITHUB_TOKEN=${{ secrets.WORKSTATION_KEY3 }}
-          echo ASI_APP_PATH=%ASI_APP_PATH%
-          echo ACTIONS_PATH=%ACTIONS_PATH%
-          echo GITHUB_TOKEN=%GITHUB_TOKEN%
+          for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" ASI_APP_REPO_PATH') do (
+            echo ASI_APP_PATH=%%i>> "%GITHUB_ENV%"
+          )
+          for /f "delims=" %%i in ('python "%WORKSPACE_PATH%\local-scripts-do_not_delete\resolve_paths.py" GITHUB_ACTIONS_SCRIPTS_PATH') do (
+            echo ACTIONS_PATH=%%i>> "%GITHUB_ENV%"
+          )
+          echo GITHUB_TOKEN=${{ secrets.WORKSTATION_KEY3 }}>> "%GITHUB_ENV%"
 
       - name: Check requirements
         id: check-reqs
