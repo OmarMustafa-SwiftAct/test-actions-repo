@@ -3,7 +3,7 @@ name: Run on Self-Hosted Runner (Push to Master)
 on:
   push:
     branches:
-      - master
+      - main
 
 concurrency:
   group: test-push-${{ github.ref }}
