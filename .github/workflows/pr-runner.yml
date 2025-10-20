@@ -39,7 +39,7 @@ jobs:
           call "%ACTIONS_PATH%\Check_requirements.bat"
 
       # =================================================================
-      # 2. PIPELINE STAGES (ALL)
+      # 2. PIPELINE STAGES (ALL) 
       # =================================================================
       - name: Pipeline - Prebuild (Setup)
         if: steps.set-env.conclusion == 'success'
