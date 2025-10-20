@@ -38,20 +38,11 @@ jobs:
           cd /d "%ASI_APP_PATH%"
           call "%ACTIONS_PATH%\Check_requirements.bat"
 
-      - name: Git Update
-        id: update-repos
-        if: steps.check-reqs.conclusion == 'success'
-        shell: cmd
-        run: |
-          @echo off
-          cd /d "%ASI_APP_PATH%"
-          call "%ACTIONS_PATH%\git_update.bat" master master %GITHUB_TOKEN%
-
       # =================================================================
       # 2. PIPELINE STAGES (ALL)
       # =================================================================
       - name: Pipeline - Prebuild (Setup)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -60,7 +51,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (Handle PFCs)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -68,7 +59,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (Static Analysis GL)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -76,7 +67,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (File Management)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -84,7 +75,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (PFC Ordering)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -92,7 +83,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (CPP Check)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -100,7 +91,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Prebuild (Target Auto Add)
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -108,7 +99,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Compiler License Check
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
@@ -116,7 +107,7 @@ jobs:
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
       - name: Pipeline - Build
-        if: steps.update-repos.conclusion == 'success'
+        if: steps.set-env.conclusion == 'success'
         shell: cmd
         run: |
           @echo off
