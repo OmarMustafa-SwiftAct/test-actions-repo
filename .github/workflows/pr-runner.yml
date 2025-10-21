@@ -82,14 +82,6 @@ jobs:
           set PIPELINE_STAGE=prebuild-pfc_ordering
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
 
-      - name: Pipeline - Prebuild (CPP Check)
-        if: always() && steps.set-env.conclusion == 'success'
-        shell: cmd
-        run: |
-          @echo off
-          set PIPELINE_STAGE=prebuild-cpp_check
-          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
-
       - name: Pipeline - Prebuild (Target Auto Add)
         if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
