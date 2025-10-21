@@ -9,12 +9,12 @@ concurrency:
   group: test-push-${{ github.ref }}
   cancel-in-progress: false
 
+
 jobs:
   run-on-self-hosted:
     runs-on: [self-hosted, Windows, X64]
     env:
-      GITHUB_TOKEN: ${{ secrets.WORKSTATION_KEY3 }}   # ✅ Set it here
-
+      GITHUB_TOKEN: ${{ secrets.WORKSTATION_KEY3 }}   
     steps:
       - name: Setup environment
         id: set-env
@@ -37,7 +37,14 @@ jobs:
           @echo off
           cd /d "%ASI_APP_PATH%"
           call "%ACTIONS_PATH%\Check_requirements.bat"
-
+      - name: Git Update
+        id: update-repos
+        if: steps.check-reqs.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          cd /d "%ASI_APP_PATH%"
+          call "%ACTIONS_PATH%\git_update.bat" master master %GITHUB_TOKEN%
       # =================================================================
       # 2. PIPELINE STAGES (ALL) 
       # =================================================================
@@ -81,7 +88,13 @@ jobs:
           @echo off
           set PIPELINE_STAGE=prebuild-pfc_ordering
           call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
-
+      - name: Pipeline - Prebuild (CPP Check)
+        if: always() && steps.set-env.conclusion == 'success'
+        shell: cmd
+        run: |
+          @echo off
+          set PIPELINE_STAGE=prebuild-cpp_check
+          call "%ACTIONS_PATH%\Pipeline.bat" Automated_master_checks
       - name: Pipeline - Prebuild (Target Auto Add)
         if: always() && steps.set-env.conclusion == 'success'
         shell: cmd
